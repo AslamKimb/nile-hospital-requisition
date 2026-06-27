@@ -434,6 +434,26 @@
       .modal-backdrop { display: none !important; }
       @page { margin: 1.5cm; size: A4; }
     }
+
+    /* ── PRINT-MODE (toggled by sharePDF) ── */
+    .print-mode .toolbar { display: none !important; }
+    .print-mode .card { box-shadow: none; border: none; padding: 1rem; border-radius: 0; }
+    .print-mode .doc-header { margin-bottom: 1rem; }
+    .print-mode .info-grid { margin-bottom: 0.5rem; }
+    .print-mode .info-col { padding: 10px 12px; }
+    .print-mode .info-col-title { margin-bottom: 6px; }
+    .print-mode .field-group { margin-bottom: 6px; }
+    .print-mode .field-input,
+    .print-mode .items-table td input { border-bottom-color: transparent !important; background: transparent !important; }
+    .print-mode .field-input[readonly] { font-family: var(--font-mono); }
+    .print-mode .del-btn,
+    .print-mode .add-row-btn { display: none !important; }
+    .print-mode .items-table td input:focus { background: transparent !important; }
+    .print-mode .table-wrap { overflow: visible; }
+    .print-mode .special-section { padding: 7px 10px; }
+    .print-mode .special-label { margin-bottom: 3px; }
+    .print-mode .special-section textarea { min-height: 32px; }
+    .print-mode .modal-backdrop { display: none !important; }
   </style>
 </head>
 <body>
@@ -700,6 +720,7 @@
       btn.disabled = true;
       try {
         var element = document.getElementById('printable');
+        element.classList.add('print-mode');
         var opt = {
           margin:       0.4,
           filename:     'Requisition-' + document.getElementById('req-num').value + '.pdf',
@@ -708,6 +729,7 @@
           jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
         var pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+        element.classList.remove('print-mode');
         var pdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
           await navigator.share({
