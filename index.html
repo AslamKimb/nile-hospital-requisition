@@ -180,6 +180,8 @@
     }
     .grand-label { text-align: right; padding-right: 14px !important; }
 
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
     .add-row-btn {
       font-size: 12.5px;
       color: var(--blue);
@@ -250,6 +252,33 @@
     /* ── FOOTER ── */
     .footer-note { text-align: right; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 10px; letter-spacing: 0.5px; }
 
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      body { padding: 1rem 0.75rem; }
+      .card { padding: 1.5rem 1.25rem 1.25rem; }
+      .doc-title { font-size: 16px; letter-spacing: 1.5px; }
+      .doc-subtitle { font-size: 11px; }
+      .info-col { padding: 10px 12px; }
+      .approval-col { padding: 10px 12px 28px; }
+      .toolbar { gap: 6px; }
+      .toolbar button { padding: 7px 12px; font-size: 13px; }
+      .req-badge { margin-left: 0; margin-top: 4px; width: 100%; text-align: center; }
+    }
+
+    @media (max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+      .info-col:first-child { border-right: none; border-bottom: 1.5px solid var(--border-strong); }
+      .approval-grid { grid-template-columns: 1fr; }
+      .approval-col:first-child { border-right: none; border-bottom: 1.5px solid var(--border-strong); }
+      .doc-title { font-size: 14px; letter-spacing: 1px; }
+      .doc-subtitle { font-size: 10.5px; }
+      .logo-text { font-size: 11px; }
+      .card { padding: 1.25rem 1rem 1rem; }
+      .toolbar button span { display: none; }
+      .toolbar button.primary span { display: inline; }
+      .grand-row td { font-size: 12px; padding: 6px 7px; }
+    }
+
     /* ── PRINT ── */
     @media print {
       body { background: #fff; padding: 0; }
@@ -259,6 +288,7 @@
       .field-input[readonly] { font-family: var(--font-mono); }
       .del-btn, .add-row-btn { display: none !important; }
       .items-table td input:focus { background: transparent !important; }
+      .table-wrap { overflow: visible; }
       @page { margin: 1.5cm; size: A4; }
     }
   </style>
@@ -267,13 +297,13 @@
 
   <div class="toolbar">
     <button class="primary" onclick="window.print()">
-      <i class="ti ti-printer"></i> Print / Save PDF
+      <i class="ti ti-printer"></i> <span>Print / Save PDF</span>
     </button>
     <button onclick="newRequisition()">
-      <i class="ti ti-refresh"></i> New requisition
+      <i class="ti ti-refresh"></i> <span>New requisition</span>
     </button>
     <button onclick="addRow()">
-      <i class="ti ti-plus"></i> Add line item
+      <i class="ti ti-plus"></i> <span>Add line item</span>
     </button>
     <span class="req-badge" id="toolbar-req-num"></span>
   </div>
@@ -335,6 +365,7 @@
     </div>
 
     <!-- ITEMS TABLE -->
+    <div class="table-wrap">
     <table class="items-table" id="items-table">
       <thead>
         <tr>
@@ -355,6 +386,7 @@
         </tr>
       </tfoot>
     </table>
+    </div>
 
     <button class="add-row-btn" onclick="addRow()">
       <i class="ti ti-plus"></i> Add line item
