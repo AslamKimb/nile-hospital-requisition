@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Purchase Requisition — Nile International Hospital</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -60,6 +61,7 @@
       border-color: var(--blue);
     }
     .toolbar button.primary:hover { background: #0a3f72; }
+    .toolbar button:disabled { opacity: 0.6; cursor: not-allowed; }
     .req-badge {
       font-size: 12px;
       color: var(--text-muted);
@@ -110,10 +112,10 @@
     .info-col { padding: 14px 16px; }
     .info-col:first-child { border-right: 1.5px solid var(--border-strong); }
     .info-col-title { font-size: 13px; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 7px; margin-bottom: 11px; }
-    .field-group { margin-bottom: 11px; }
-    .field-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field-group { margin-bottom: 11px; display: flex; align-items: baseline; gap: 8px; }
+    .field-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0; }
     .field-input {
-      width: 100%;
+      flex: 1;
       border: none;
       border-bottom: 1px solid var(--border-strong);
       background: transparent;
@@ -252,6 +254,120 @@
     /* ── FOOTER ── */
     .footer-note { text-align: right; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 10px; letter-spacing: 0.5px; }
 
+    /* ── MODAL ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-head h3 {
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 18px 20px; }
+    .modal-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field:last-child { margin-bottom: 0; }
+    .modal-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    .modal-field input,
+    .modal-field textarea {
+      width: 100%;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 6px;
+      padding: 9px 11px;
+      font-size: 14px;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .modal-field input:focus,
+    .modal-field textarea:focus { border-color: var(--blue); }
+    .modal-field textarea { resize: vertical; min-height: 56px; line-height: 1.5; }
+    .modal-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px 20px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .modal-foot button {
+      padding: 9px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    .modal-foot button:hover { background: #ebebeb; }
+    .modal-foot button.primary {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+    .modal-foot button.primary:hover { background: #0a3f72; }
+
+    @media (max-width: 480px) {
+      .modal-backdrop { padding: 0; align-items: flex-end; }
+      .modal-card { border-radius: 12px 12px 0 0; max-height: 92vh; }
+      .modal-row { grid-template-columns: 1fr; }
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       body { padding: 1rem 0.75rem; }
@@ -277,6 +393,8 @@
       .toolbar button span { display: none; }
       .toolbar button.primary span { display: inline; }
       .grand-row td { font-size: 12px; padding: 6px 7px; }
+      .field-group { flex-direction: column; gap: 2px; }
+      .field-label { margin-bottom: 2px; }
     }
 
     /* ── PRINT ── */
@@ -289,6 +407,7 @@
       .del-btn, .add-row-btn { display: none !important; }
       .items-table td input:focus { background: transparent !important; }
       .table-wrap { overflow: visible; }
+      .modal-backdrop { display: none !important; }
       @page { margin: 1.5cm; size: A4; }
     }
   </style>
@@ -299,10 +418,13 @@
     <button class="primary" onclick="window.print()">
       <i class="ti ti-printer"></i> <span>Print / Save PDF</span>
     </button>
+    <button onclick="sharePDF()" id="share-btn">
+      <i class="ti ti-share"></i> <span>Share</span>
+    </button>
     <button onclick="newRequisition()">
       <i class="ti ti-refresh"></i> <span>New requisition</span>
     </button>
-    <button onclick="addRow()">
+    <button onclick="openModal()">
       <i class="ti ti-plus"></i> <span>Add line item</span>
     </button>
     <span class="req-badge" id="toolbar-req-num"></span>
@@ -354,8 +476,7 @@
         </div>
         <div class="field-group">
           <label class="field-label">Address</label>
-          <input class="field-input" id="ven-addr1" type="text" placeholder="Street / P.O. Box">
-          <input class="field-input" id="ven-addr2" type="text" placeholder="City, Country" style="margin-top:7px">
+          <input class="field-input" id="ven-addr1" type="text" placeholder="Street, P.O. Box, City, Country">
         </div>
         <div class="field-group" style="margin-top:9px">
           <label class="field-label">Phone</label>
@@ -388,7 +509,7 @@
     </table>
     </div>
 
-    <button class="add-row-btn" onclick="addRow()">
+    <button class="add-row-btn" onclick="openModal()">
       <i class="ti ti-plus"></i> Add line item
     </button>
 
@@ -413,6 +534,40 @@
     </div>
 
     <div class="footer-note">Purchase Requisition 004*</div>
+  </div>
+
+  <!-- ADD ITEM MODAL -->
+  <div class="modal-backdrop" id="item-modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Add Line Item</h3>
+        <button class="modal-close" onclick="closeModal()" title="Close"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-field">
+          <label for="modal-name">Item Name</label>
+          <input type="text" id="modal-name" placeholder="e.g. Surgical Gloves">
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label for="modal-qty">Quantity</label>
+            <input type="number" id="modal-qty" min="1" step="1" value="1">
+          </div>
+          <div class="modal-field">
+            <label for="modal-price">Unit Price (UGX)</label>
+            <input type="number" id="modal-price" min="0" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+        <div class="modal-field">
+          <label for="modal-desc">Description</label>
+          <textarea id="modal-desc" placeholder="Specifications, size, brand, etc."></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="primary" onclick="addRowFromModal()">Add Item</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -440,7 +595,7 @@
 
     function newRequisition() {
       if (!confirm('Start a new requisition? This will clear the current form.')) return;
-      ['req-name','req-dept','req-contact','req-delivery','ven-name','ven-addr1','ven-addr2','ven-phone'].forEach(function(id) {
+      ['req-name','req-dept','req-contact','req-delivery','ven-name','ven-addr1','ven-phone'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.value = '';
       });
@@ -449,23 +604,46 @@
       document.getElementById('special-instructions').value = '';
       rowCount = 0;
       initForm();
-      for (var i = 0; i < 5; i++) addRow();
     }
 
-    function addRow() {
+    function openModal() {
+      document.getElementById('item-modal').classList.add('open');
+      document.getElementById('modal-name').focus();
+    }
+
+    function closeModal() {
+      document.getElementById('item-modal').classList.remove('open');
+      document.getElementById('modal-name').value = '';
+      document.getElementById('modal-qty').value = '1';
+      document.getElementById('modal-price').value = '';
+      document.getElementById('modal-desc').value = '';
+    }
+
+    function addRowFromModal() {
+      var name  = document.getElementById('modal-name').value.trim();
+      var qty   = parseInt(document.getElementById('modal-qty').value) || 1;
+      var price = parseFloat(document.getElementById('modal-price').value) || 0;
+      var desc  = document.getElementById('modal-desc').value.trim();
+      if (!name) { document.getElementById('modal-name').focus(); return; }
+      addRow(name, qty, desc, price);
+      closeModal();
+    }
+
+    function addRow(name, qty, desc, price) {
       rowCount++;
       var id = rowCount;
       var tbody = document.getElementById('items-body');
       var tr = document.createElement('tr');
       tr.id = 'row-' + id;
       tr.innerHTML =
-        '<td class="col-name"><input type="text" placeholder="Item name"></td>' +
-        '<td class="col-qty"><input type="number" min="1" step="1" value="1" id="qty-' + id + '" oninput="calcRow(' + id + ')"></td>' +
-        '<td class="col-desc"><input type="text" placeholder="Description / specifications"></td>' +
-        '<td class="col-price"><input type="number" min="0" step="0.01" placeholder="0.00" id="price-' + id + '" oninput="calcRow(' + id + ')"></td>' +
-        '<td class="col-total total-cell" id="total-' + id + '">0.00</td>' +
+        '<td class="col-name"><input type="text" placeholder="Item name" value="' + (name || '') + '"></td>' +
+        '<td class="col-qty"><input type="number" min="1" step="1" value="' + (qty || 1) + '" id="qty-' + id + '" oninput="calcRow(' + id + ')"></td>' +
+        '<td class="col-desc"><input type="text" placeholder="Description / specifications" value="' + (desc || '') + '"></td>' +
+        '<td class="col-price"><input type="number" min="0" step="0.01" placeholder="0.00" value="' + (price || '') + '" id="price-' + id + '" oninput="calcRow(' + id + ')"></td>' +
+        '<td class="col-total total-cell" id="total-' + id + '">' + ((qty || 0) * (price || 0)).toFixed(2) + '</td>' +
         '<td class="col-del"><button class="del-btn" onclick="delRow(' + id + ')" title="Remove row"><i class="ti ti-x"></i></button></td>';
       tbody.appendChild(tr);
+      calcGrand();
     }
 
     function calcRow(id) {
@@ -490,8 +668,60 @@
       calcGrand();
     }
 
+    async function sharePDF() {
+      var btn = document.getElementById('share-btn');
+      var origHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="ti ti-loader"></i> <span>Generating...</span>';
+      btn.disabled = true;
+      try {
+        var element = document.getElementById('printable');
+        var opt = {
+          margin:       0.4,
+          filename:     'Requisition-' + document.getElementById('req-num').value + '.pdf',
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        var pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
+        var pdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          await navigator.share({
+            files: [pdfFile],
+            title: 'Purchase Requisition',
+            text: 'Purchase Requisition ' + document.getElementById('req-num').value
+          });
+        } else {
+          var url = URL.createObjectURL(pdfBlob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = opt.filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          alert('Failed to generate or share PDF. Please try again.');
+          console.error(err);
+        }
+      } finally {
+        btn.innerHTML = origHTML;
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById('item-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && document.getElementById('item-modal').classList.contains('open')) {
+        closeModal();
+      }
+    });
+
     initForm();
-    for (var i = 0; i < 5; i++) addRow();
   </script>
 </body>
 </html>
