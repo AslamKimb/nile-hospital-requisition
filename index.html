@@ -714,22 +714,26 @@
     }
 
     async function sharePDF() {
+      if (typeof html2pdf === 'undefined') {
+        alert('PDF library failed to load. Please check your connection and refresh.');
+        return;
+      }
       var btn = document.getElementById('share-btn');
       var origHTML = btn.innerHTML;
       btn.innerHTML = '<i class="ti ti-loader"></i> <span>Generating...</span>';
       btn.disabled = true;
+      var element = document.getElementById('printable');
       try {
-        var element = document.getElementById('printable');
         element.classList.add('print-mode');
+        var isMobile = window.innerWidth <= 768;
         var opt = {
           margin:       0.4,
           filename:     'Requisition-' + document.getElementById('req-num').value + '.pdf',
           image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true },
+          html2canvas:  { scale: isMobile ? 1 : 2, useCORS: true },
           jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
         var pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-        element.classList.remove('print-mode');
         var pdfFile = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
           await navigator.share({
@@ -749,10 +753,13 @@
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
-          alert('Failed to generate or share PDF. Please try again.');
-          console.error(err);
+          console.error('Share PDF error:', err);
+          if (confirm('PDF generation failed (' + err.message + '). Use your device\'s Print function instead?')) {
+            window.print();
+          }
         }
       } finally {
+        element.classList.remove('print-mode');
         btn.innerHTML = origHTML;
         btn.disabled = false;
       }
