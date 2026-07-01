@@ -414,26 +414,27 @@
     }
 
     /* ── PRINT ── */
-    @media print {
-      body { background: #fff; padding: 0; }
-      .toolbar { display: none !important; }
-      .card { box-shadow: none; border: none; padding: 1rem; border-radius: 0; }
-      .doc-header { margin-bottom: 1rem; }
-      .info-grid { margin-bottom: 0.5rem; }
-      .info-col { padding: 10px 12px; }
-      .info-col-title { margin-bottom: 6px; }
-      .field-group { margin-bottom: 6px; }
-      .field-input, .items-table td input { border-bottom-color: transparent !important; background: transparent !important; }
-      .field-input[readonly] { font-family: var(--font-mono); }
-      .del-btn, .add-row-btn { display: none !important; }
-      .items-table td input:focus { background: transparent !important; }
-      .table-wrap { overflow: visible; }
-      .special-section { padding: 7px 10px; }
-      .special-label { margin-bottom: 3px; }
-      .special-section textarea { min-height: 32px; }
-      .modal-backdrop { display: none !important; }
-      @page { margin: 1.5cm; size: A4; }
-    }
+      @media print {
+        body { background: #fff; padding: 0; }
+        .toolbar { display: none !important; }
+        .card { box-shadow: none; border: none; padding: 1rem; border-radius: 0; }
+        .doc-header { margin-bottom: 1rem; }
+        .info-grid { margin-bottom: 0.5rem; }
+        .info-col { padding: 10px 12px; }
+        .info-col-title { margin-bottom: 6px; }
+        .field-group { margin-bottom: 6px; }
+        .field-input, .items-table td input { border-bottom-color: transparent !important; background: transparent !important; }
+        .field-input[readonly] { font-family: var(--font-mono); }
+        .del-btn, .add-row-btn { display: none !important; }
+        .items-table td input:focus { background: transparent !important; }
+        .table-wrap { overflow: visible; }
+        .special-section { padding: 7px 10px; }
+        .special-label { margin-bottom: 3px; }
+        .special-section textarea { min-height: 32px; }
+        .modal-backdrop { display: none !important; }
+        @page { margin: 1.5cm; size: A4; }
+        input::placeholder, textarea::placeholder { color: transparent !important; }
+      }
 
     /* ── PRINT-MODE (toggled by sharePDF) ── */
     .print-mode .toolbar { display: none !important; }
@@ -454,6 +455,8 @@
     .print-mode .special-label { margin-bottom: 3px; }
     .print-mode .special-section textarea { min-height: 32px; }
     .print-mode .modal-backdrop { display: none !important; }
+    .print-mode input::placeholder,
+    .print-mode textarea::placeholder { color: transparent !important; }
   </style>
 </head>
 <body>
